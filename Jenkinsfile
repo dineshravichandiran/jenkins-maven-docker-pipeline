@@ -41,20 +41,15 @@ pipeline {
       }
     }
 
-    stage('SonarQube analysis') {
+    // The scanner itself waits for the quality gate (sonar.qualitygate.wait), so no SonarQube-to-Jenkins webhook is needed.
+    // SonarQube refuses webhooks to private addresses by default, which is what a local Docker setup would use.
+    stage('SonarQube analysis and quality gate') {
       when { expression { params.RUN_SONAR } }
       steps {
-        withSonarQubeEnv('sonarqube') {
-          sh 'mvn -B -ntp -f app/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=greeter'
-        }
-      }
-    }
-
-    stage('Quality gate') {
-      when { expression { params.RUN_SONAR } }
-      steps {
-        timeout(time: 5, unit: 'MINUTES') {
-          waitForQualityGate abortPipeline: true
+        timeout(time: 10, unit: 'MINUTES') {
+          withSonarQubeEnv('sonarqube') {
+            sh 'mvn -B -ntp -f app/pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=greeter -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=300'
+          }
         }
       }
     }
