@@ -28,7 +28,7 @@ services:
   registry:
     image: registry:2
     ports:
-      - "5000:5000"
+      - "5001:5000"   # 5001 on the host: macOS AirPlay Receiver already uses 5000
 volumes:
   jenkins_home:
   sonar_data:

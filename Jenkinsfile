@@ -19,7 +19,7 @@ pipeline {
   }
 
   parameters {
-    string(name: 'REGISTRY', defaultValue: 'localhost:5000',
+    string(name: 'REGISTRY', defaultValue: 'localhost:5001',
            description: 'Where to push the image. Use an ECR URI (123456789012.dkr.ecr.ap-south-1.amazonaws.com/greeter) for ECR.')
     booleanParam(name: 'RUN_SONAR', defaultValue: true, description: 'Run the SonarQube analysis and quality gate')
   }

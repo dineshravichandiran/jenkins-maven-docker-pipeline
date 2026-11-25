@@ -6,4 +6,5 @@ pipeline-stage-view
 junit
 credentials-binding
 sonar
-timestamps
+timestamper
+maven-plugin
