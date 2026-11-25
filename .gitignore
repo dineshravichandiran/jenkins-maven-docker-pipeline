@@ -1,0 +1,8 @@
+app/target/
+*.class
+.idea/
+.vscode/
+*.env
+.sonar/
+.scannerwork/
+.DS_Store

@@ -1,0 +1,55 @@
+# Jenkins Configuration as Code: the whole controller is rebuilt from this file, nothing is clicked in the UI.
+jenkins:
+  systemMessage: "Greeter CI (Jenkins configured as code)"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+tool:
+  maven:
+    installations:
+      - name: "maven-3.9"
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.9.9"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "sonar-token"
+              secret: "${SONAR_TOKEN:-unset}"
+
+unclassified:
+  sonarGlobalConfiguration:
+    installations:
+      - name: "sonarqube"
+        serverUrl: "http://sonarqube:9000"
+        credentialsId: "sonar-token"
+
+jobs:
+  - script: >
+      pipelineJob('greeter') {
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('https://github.com/dineshravichandiran/jenkins-maven-docker-pipeline.git') }
+                branches('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+      }
